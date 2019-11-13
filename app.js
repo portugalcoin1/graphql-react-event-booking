@@ -13,9 +13,38 @@ const User = require('./models/user');
 const app = express();
 
 // Global Variable
-const events = [];
+// const events = [];
 
 app.use(bodyParser.json());
+
+// buscar(fetch) multiplos ID
+// eventIds é o argumento
+const events = eventIds => {
+    // $in operador especial do MongoDB
+    return Event.find({ _id: { $in: eventIds } })
+    .then(events => {
+        return events.map(event => {
+            return { 
+                ...event._doc, 
+                _id: event.id, 
+                creator: user.bind(this, event.creator) 
+            };
+        });
+    })
+    .catch(err => {
+        throw err;
+    })
+}
+
+const user = userId => {
+    return User.findById(userId)
+        .then( user => {
+            return { ...user._doc, _id: user.id, createdEvents: events.bind(this, user._doc.createdEvents) };
+        })
+        .catch(err => {
+            throw err;
+        });
+};
 
 /*app.get('/', (re, res, next) => {
     res.send('hello world!');
@@ -31,12 +60,14 @@ app.use(
                 description: String!
                 price: Float!
                 date: String!
+                creator: User!
             }
 
             type User {
                 _id: ID!
                 email: String!
                 password: String
+                createdEvents:[Event!]
             }
 
             input EventInput {
@@ -68,12 +99,16 @@ app.use(
         rootValue: {
             events: () => {
                 // return events;
+                // retorna toda a informação de uma relação
                 return Event.find()
                     .then( events => {
                         return events.map(event => {
-                            return { ...event._doc, _id: event.id }
+                            return { 
+                                ...event._doc, 
+                                _id: event.id,
+                                creator: user.bind(this, event._doc.creator)
+                            }
                         });
-                        return events;
                     })
                     .catch( err => {
                         throw err;
@@ -92,7 +127,11 @@ app.use(
                 return event
                     .save()
                     .then( result => {
-                        createdEvent = { ...result._doc, _id: result._doc_id };
+                        createdEvent = { 
+                            ...result._doc, 
+                            _id: result._doc_id,
+                            creator: user.bind(this, result._doc.creator) 
+                        };
                         // hardcode para testes o ID é de user especifico
                         return User.findById('5dcc17d7bd92c7375cbe0c72');
                         // console.log(result);
