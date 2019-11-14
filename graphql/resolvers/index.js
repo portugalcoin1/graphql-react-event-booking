@@ -66,7 +66,7 @@ module.exports = {
             description: args.eventInput.description,
             price: +args.eventInput.price, // o símbolo + converte o que virá no args para um número
             date: new Date(args.eventInput.date),
-            creator: '5dcc17d7bd92c7375cbe0c72'
+            creator: '5dcd641734d312303cb18653'
         });
         let createdEvent;
         try {
@@ -79,14 +79,14 @@ module.exports = {
                     creator: user.bind(this, result._doc.creator) 
                 };
                 // hardcode para testes o ID é de user especifico
-                const user = await User.findById('5dcc17d7bd92c7375cbe0c72');
+                const creator = await User.findById('5dcd641734d312303cb18653');
                 // console.log(result);
                 // return { ...result._doc, _id: result._doc_id.toString() };
-                if (!user) {
+                if (!creator) {
                     throw new Error('User not found.');
                 }
-                user.createdEvents.push(event);
-                await user.save();
+                creator.createdEvents.push(event);
+                await creator.save();
                 return createdEvent;
         } catch (err) {    
                 console.log(err);
