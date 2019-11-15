@@ -22,7 +22,7 @@ const events = async eventIds => {
             });
             return events;
         } catch (err) {
-            throw err;
+          throw err;
         }
 }
 
@@ -35,7 +35,7 @@ const singleEvent = async eventId => {
                 creator: user.bind(this, event.creator) 
             };
         } catch (err) {
-            throw err;
+          throw err;
         }
 };
 
@@ -48,7 +48,7 @@ const user = async userId => {
                 createdEvents: events.bind(this, user._doc.createdEvents) 
             };
         } catch (err) {
-            throw err;
+          throw err;
         }
 };
 
@@ -67,7 +67,7 @@ module.exports = {
                 }
             })
         } catch (err) {
-            throw err;
+          throw err;
         };
     },
     bookings: async () => {
@@ -138,14 +138,13 @@ module.exports = {
                 password: hashedPassword
             });
             const result = await user.save();
-            
             return { 
                 ...result._doc, 
                 password: null,  
                 _id: result._doc_id 
             };
         } catch (err) {
-            throw err;
+          throw err;
         }
     }, 
     bookEvent: async args => {
@@ -163,5 +162,19 @@ module.exports = {
           createdAt: new Date(result._doc.createdAt).toISOString(),
           updatedAt: new Date(result._doc.updatedAt).toISOString()
         };
+      },
+      cancelBooking: async args => {
+        try {
+          const booking = await Booking.findById(args.bookingId).populate('event');
+          const event = {
+            ...booking.event._doc,
+            _id: booking.event.id,
+            creator: user.bind(this, booking.event._doc.creator)
+          };
+          await Booking.deleteOne({ _id: args.bookingId });
+          return event;
+        } catch (err) {
+          throw err;
+        }
       }
 }
