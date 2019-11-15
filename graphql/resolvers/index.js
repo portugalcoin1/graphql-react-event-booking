@@ -6,7 +6,7 @@ const bcrypt = require('bcryptjs'); // Pack para fazer a encriptação das passw
 const Event = require('../../models/event');
 // Importação do modelo do User
 const User = require('../../models/user');
-const User = require('../../models/boking');
+const Booking = require('../../models/booking');
 
 // buscar(fetch) multiplos ID
 // eventIds é o argumento
@@ -49,18 +49,32 @@ module.exports = {
         try{
         const events = await Event.find()
             return events.map(event => {
-                    return { 
-                        ...event._doc, 
-                        _id: event.id,
-                        date: new Date(event._doc.date).toISOString(),
-                        creator: user.bind(this, event._doc.creator)
-                    }
+                return { 
+                    ...event._doc, 
+                    _id: event.id,
+                    date: new Date(event._doc.date).toISOString(),
+                    creator: user.bind(this, event._doc.creator)
+                }
             })
         } catch (err) {
-                throw err;
-            };
+            throw err;
+        };
     },
-    // CreateEvent e o CreateUser são os -> RESOLVERS
+    bookings: async () => {
+        try {
+            const bookings = await bookings.find();
+            return bookings.map(booking => {
+                return { 
+                    ...booking._doc, 
+                    _id: booking.id,
+                    createdAt: new Date(booking._doc.createdAt).toISOString(),
+                    updatedAt: new Date(booking._doc.createdAt).toISOString()
+                }
+            })
+        } catch (err) {
+            throw err;
+        }
+    },
     createEvent: async args => {                
         const event = new Event({
             title: args.eventInput.title,
@@ -118,6 +132,26 @@ module.exports = {
                 password: null,  
                 _id: result._doc_id 
             };
+        } catch (err) {
+            throw err;
+        }
+    }, 
+    bookEvent: async args => {
+        try {
+            const fetechedEvent = await Event.findOne({_id: args.eventId});
+            const booking = new Booking({
+                userId: '5dcd641734d312303cb18653',
+                event: fetechedEvent
+            });
+            const result = await booking.save();
+
+            return { 
+                ...result._doc, 
+                _id: result.id,
+                createdAt: new Date(result._doc.createdAt).toISOString(),
+                updatedAt: new Date(result._doc.createdAt).toISOString()
+            };
+
         } catch (err) {
             throw err;
         }
