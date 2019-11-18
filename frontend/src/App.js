@@ -1,26 +1,25 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { Component } from 'react';
+import { BrowserRouter, Route, Redirect, Switch } from 'react-router-dom';
+
+import AuthPage from './pages/Auth';
+import BookingsPage from './pages/Bookings';
+import EventsPage from './pages/Events';
+
 import './App.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends Component {
+  render() {
+    return (
+      <BrowserRouter>
+        <Switch>
+          <Redirect from="/" to="/auth" exact/>
+          <Route path="/auth" Component={AuthPage} />
+          <Route path="/events" Component={EventsPage} />
+          <Route path="/bookings" Component={BookingsPage} />
+        </Switch>
+      </BrowserRouter>
+    );
+  }
 }
 
 export default App;
