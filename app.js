@@ -5,17 +5,17 @@ const mongoose = require('mongoose'); // Pack para ligação com o mongoDB
 
 const graphQlSchema = require('./graphql/schema/index'); // chamada ao ficheiro do index do schema
 const graphQlResolvers = require('./graphql/resolvers/index'); // chamada ao ficheiro do index do schema
+const isAuth = require('./middleware/is-auth');
 
 const app = express();
-
-// Global Variable
-// const events = [];
 
 app.use(bodyParser.json());
 
 /*app.get('/', (re, res, next) => {
     res.send('hello world!');
 })*/
+
+app.use(isAuth);
 
 app.use(
     '/graphql', 

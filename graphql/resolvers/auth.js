@@ -1,5 +1,6 @@
 const bcrypt = require('bcryptjs'); // Pack para fazer a encriptação das passwords MD5
 const User = require('../../models/user'); // Importação do modelo do User
+const jwt = require('jsonwebtoken'); // Gerar token
 
 module.exports = {
     createUser: async args => {
@@ -25,5 +26,27 @@ module.exports = {
       } catch (err) {
         throw err;
       }
-    }
+    },
+    // depois do async eu posso usar o args ou usar o objecto - vai dar ao mesmo
+    login: async ({ email, password }) => {
+        // query para verificar se o utilizador existe
+        const user = await User.findOne({email: email});
+        if (!user) {
+          throw new Error('User does not exist!');
+        }
+        // 1º arg password do cliente 2º argumento password da base de dados
+        const isEqual = await bcrypt.compare(password, user.password);
+        if (!isEqual) {
+          throw new Error('Password is incorrect!');
+        }
+        // Criação do TOKEN
+        const token = jwt.sign(
+          { userId: user.id, email: user.email }, 
+          'somesupersecretkey', 
+          /*{
+          expiresIn = '1h'
+          }*/
+        );
+        return { userId: user.id, token: token, tokenExpiration: 1 }
+    } 
 };
