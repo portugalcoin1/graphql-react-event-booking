@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 
-class EventsPage extends Component {
-    render() {
-        return <h1>The Events Page</h1>;
-    }
+class BookingsPage extends Component {
+  render() {
+    return <h1>The Bookings Page</h1>;
+  }
 }
 
-export default EventsPage;
+export default BookingsPage;
