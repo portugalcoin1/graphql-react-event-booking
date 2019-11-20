@@ -28,7 +28,7 @@ type User {
 type AuthData {
     userId: ID!
     token: String!
-    tokenExpiration: Int!
+    tokenExpiration: Int
 }
 
 input EventInput {

@@ -4,12 +4,22 @@ import React, { Component } from 'react';
 import './Auth.css';
 
 class AuthPage extends Component {
+  state = {
+    isLogin: true
+  }
+
   // Construtor para comunicar com o backend
   // Devemos ter outro terminal aberto com o backend a correr
   constructor(props) {
     super(props);
     this.emailEl = React.createRef();
     this.passwordEl = React.createRef();
+  }
+
+  switchModeHandler = () => {
+    this.setState(preState => {
+      return {isLogin: !preState.isLogin};
+    })
   }
 
   submitHandler = event => {
@@ -22,7 +32,30 @@ class AuthPage extends Component {
       return; // não continua
     }
 
-    const requestBody = {};
+    let requestBody = {
+      query: `
+        query {
+          login(email: "${email}", password: "${password}"){
+            userId
+            token
+          }
+        }
+      `
+    }
+
+    if (!this.state.isLogin) {
+      // Inserção de dados na BD fazendo query GraphQL vindo do Front-End
+      requestBody = {
+        query: `
+          mutation {
+            createUser(userInput: {email: "${email}", password: "${password}"}) {
+              _id
+              email
+            }
+          }
+        `
+      }
+    }
 
     // enviar um http rquest
     fetch('http://localhost:8000/graphql', {
@@ -31,19 +64,16 @@ class AuthPage extends Component {
       headers: {
         'Content-Type': 'application/json'
       }
-    })
-      .then(res => {
-        if (res.status !== 200 && res.status !== 201) {
-          throw new Error('Failed!');
-        }
-        return res.json();
-      })
-      .then(resData => {
-        console.log(resData);
-      })
-      .catch(err => {
-        console.log(err);
-      });
+    }).then( res => {
+      if (res.status !== 200 && res.status !== 201) {
+        throw new Error('Failed');
+      }
+      return res.json();
+    }).then(resData => {
+      console.log(resData);
+    }).catch(err => {
+      console.log(err);
+    });
   };
 
   render() {
@@ -58,8 +88,8 @@ class AuthPage extends Component {
           <input type="password" id="password" ref={this.passwordEl}></input>
         </div>
         <div className="form-actions">
-          <button type="button">Signup</button>
-          <button type="submit">Submit</button>
+         <button type="submit">Submit</button>
+    <button type="button" onClick={this.switchModeHandler}>Switch {this.state.isLogin ? 'Sign Up' : 'Login'}</button>
         </div>
       </form>
     );

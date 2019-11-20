@@ -11,6 +11,18 @@ const app = express();
 
 app.use(bodyParser.json());
 
+// middleware para permitir que kker acesso localmente é permitido
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'POST,GET,OPTIONS'); // Grant acess a todos os clientes localmente
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    if (req.method === 'OPTIONS') {
+      return res.sendStatus(200);
+    }
+    next();
+  });
+
+
 /*app.get('/', (re, res, next) => {
     res.send('hello world!');
 })*/
