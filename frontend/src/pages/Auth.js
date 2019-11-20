@@ -2,11 +2,14 @@ import React, { Component } from 'react';
 
 // Importar o css da pagina auth.js
 import './Auth.css';
+import AuthContext from '../context/auth-context';
 
 class AuthPage extends Component {
   state = {
     isLogin: true
   }
+
+  static contextType = AuthContext;
 
   // Construtor para comunicar com o backend
   // Devemos ter outro terminal aberto com o backend a correr
@@ -70,7 +73,12 @@ class AuthPage extends Component {
       }
       return res.json();
     }).then(resData => {
-      console.log(resData);
+      if (resData.data.login.token) {
+        this.context.login(
+          resData.data.login.token, 
+          resData.data.login.userId
+        );
+      }
     }).catch(err => {
       console.log(err);
     });
