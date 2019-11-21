@@ -24,6 +24,16 @@ class EventsPage extends Component {
     
       modalConfirmHandler = () => {
         this.setState({ creating: false });
+        const title = this.titleElRef.current.value;
+        const price = +this.pricelRef.current.value;
+        const date = this.dateElRef.current.value;
+        const description = this.descriptionElRef.current.value;
+
+        if (title.trim().length === 0 || price.trim().length === 0 || date.trim().length === 0 || description.trim().length === 0) {
+          return;
+        }
+
+        const event = {title: title, price, date, desciption};
       };
     
       modalCancelHandler = () => {
@@ -46,19 +56,19 @@ class EventsPage extends Component {
                 <form>
                     <div className="form-control">
                         <label htmlFor="title">Title</label>
-                        <input type="text" id="title" ref={ this.titleElRef}></input>
+                        <input type="text" id="title" ref={this.titleElRef}></input>
                     </div>
                     <div className="form-control">
                         <label htmlFor="price">Price</label>
-                        <input type="number" id="price" ref={ this.priceElRef}></input>
+                        <input type="number" id="price" ref={this.priceElRef}></input>
                     </div>
                     <div className="form-control">
                         <label htmlFor="date">Date</label>
-                        <input type="date" id="date" ref={ this.dateElRef}></input>
+                        <input type="datetime-local" id="date" ref={this.dateElRef}></input>
                     </div>
                     <div className="form-control">
                         <label htmlFor="description">Description</label>
-                        <textarea id="description" rows="4" ref={ this.descriptionElRef}></textarea>
+                        <textarea id="description" rows="4" ref={this.descriptionElRef}></textarea>
                     </div>
                 </form>
               </Modal>
