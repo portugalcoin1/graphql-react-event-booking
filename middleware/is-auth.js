@@ -8,10 +8,10 @@ module.exports = (req, res, next) => {
         return next();
     }
     const token = authHeader.split(' ')[1]; // 2 valor retornados (1º user e 2º token - isto num array) e vai buscar o token
-    if (!token === '') {
+    if (!token || token === '') {
         req.isAuth = false;
-        return next(); 
-    }
+        return next();
+      }
     let decodedToken;
     // Verifica o token com a Key que temos - Decoded Token
     try {
